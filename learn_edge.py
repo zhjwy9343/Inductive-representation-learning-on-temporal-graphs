@@ -40,6 +40,7 @@ parser.add_argument('--uniform', action='store_true', help='take uniform samplin
 
 try:
     args = parser.parse_args()
+    print(args)
 except:
     parser.print_help()
     sys.exit(0)
@@ -52,7 +53,7 @@ NUM_HEADS = args.n_head
 DROP_OUT = args.drop_out
 GPU = args.gpu
 UNIFORM = args.uniform
-NEW_NODE = args.new_node
+# NEW_NODE = args.new_node
 USE_TIME = args.time
 AGG_METHOD = args.agg_method
 ATTN_MODE = args.attn_mode
@@ -120,6 +121,8 @@ def eval_one_epoch(hint, tgan, sampler, src, dst, ts, label):
 g_df = pd.read_csv('./processed/ml_{}.csv'.format(DATA))
 e_feat = np.load('./processed/ml_{}.npy'.format(DATA))
 n_feat = np.load('./processed/ml_{}_node.npy'.format(DATA))
+
+print(g_df.head(4))
 
 val_time, test_time = list(np.quantile(g_df.ts, [0.70, 0.85]))
 

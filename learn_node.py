@@ -23,7 +23,8 @@ class LR(torch.nn.Module):
         self.fc_2 = torch.nn.Linear(80, 10)
         self.fc_3 = torch.nn.Linear(10, 1)
         self.act = torch.nn.ReLU()
-        self.dropout = torch.nn.Dropout(p=drop, inplace=True)
+        # self.dropout = torch.nn.Dropout(p=drop, inplace=True)
+        self.dropout = torch.nn.Dropout(p=drop)
 
     def forward(self, x):
         x = self.act(self.fc_1(x))
@@ -187,11 +188,11 @@ logger.debug('num of batches per epoch: {}'.format(num_batch))
 idx_list = np.arange(num_instance)
 np.random.shuffle(idx_list) 
 
-logger.info('loading saved TGAN model')
-model_path = f'./saved_models/{args.prefix}-{args.agg_method}-{args.attn_mode}-{DATA}.pth'
-tgan.load_state_dict(torch.load(model_path))
-tgan.eval()
-logger.info('TGAN models loaded')
+# logger.info('loading saved TGAN model')
+# model_path = f'./saved_models/{args.prefix}-{args.agg_method}-{args.attn_mode}-{DATA}.pth'
+# tgan.load_state_dict(torch.load(model_path))
+# tgan.eval()
+# logger.info('TGAN models loaded')
 logger.info('Start training node classification task')
 
 lr_model = LR(n_feat.shape[1])
@@ -248,7 +249,8 @@ for epoch in tqdm(range(args.n_epoch)):
         lr_optimizer.zero_grad()
         with torch.no_grad():
             src_embed = tgan.tem_conv(src_l_cut, ts_l_cut, NODE_LAYER)
-        
+            # src_embed = tgan(src_l_cut, ts_l_cut, NODE_LAYER) 
+             
         src_label = torch.from_numpy(label_l_cut).float().to(device)
         lr_prob = lr_model(src_embed).sigmoid()
         lr_loss = lr_criterion(lr_prob, src_label)
